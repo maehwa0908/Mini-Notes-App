@@ -24,7 +24,7 @@ export default function TaskDetailScreen() {
           onPress: () => {
             try {
               deleteTask(Number(id));
-              router.replace("/tasks");
+              router.replace("/(tabs)/task/tasks");
             } catch (error) {
               Alert.alert("Error", "Failed to delete task");
             }
@@ -53,7 +53,6 @@ export default function TaskDetailScreen() {
       <View style={styles.field}>
         <Text style={styles.label}>Description</Text>
         <Text style={styles.value}>
-          {description?.trim() ? description : "No description provided."}
         </Text>
       </View>
 
@@ -61,7 +60,7 @@ export default function TaskDetailScreen() {
         style={styles.editButton}
         onPress={() =>
           router.push({
-            pathname: "/edit",
+            pathname: "/(tabs)/task/edit",
             params: { id, title, description, category, status },
           })
         }
@@ -100,7 +99,7 @@ const styles = StyleSheet.create({
     color: "#111",
   },
   editButton: {
-    backgroundColor: "#111",
+    backgroundColor: "#4A90E2",
     padding: 14,
     borderRadius: 8,
     marginBottom: 12,
@@ -111,14 +110,14 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   deleteButton: {
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#ff0a0a",
     padding: 14,
     borderRadius: 8,
     borderWidth: 1,
     borderColor: "#ddd",
   },
   deleteButtonText: {
-    color: "#111",
+    color: "#ffffff",
     textAlign: "center",
     fontWeight: "600",
   },

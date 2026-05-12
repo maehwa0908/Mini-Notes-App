@@ -1,6 +1,6 @@
-import { addTask } from "@/lib/database";
-import { router } from "expo-router";
-import React, { useState } from "react";
+import { updateTask } from "@/lib/database";
+import { router, useLocalSearchParams } from "expo-router";
+import { useState } from "react";
 import {
   Alert,
   Pressable,
@@ -14,23 +14,31 @@ import {
 
 const statusOptions = ["Pending", "Ongoing", "Finished"];
 
-export default function AddTaskScreen() {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [category, setCategory] = useState("");
-  const [status, setStatus] = useState("Pending");
+export default function EditTaskScreen() {
+  const params = useLocalSearchParams<{
+    id: string;
+    title: string;
+    description: string;
+    category: string;
+    status: string;
+  }>();
 
-  const handleSave = async () => {
+  const [title, setTitle] = useState(params.title || "");
+  const [description, setDescription] = useState(params.description || "");
+  const [category, setCategory] = useState(params.category || "");
+  const [status, setStatus] = useState(params.status || "Pending");
+
+  const handleUpdate = () => {
     try {
       if (!title.trim()) {
         throw new Error("Task title is required");
       }
-      addTask(title, description, category, status);
-      Alert.alert("Success", `Task created successfully.`);
-      router.back();
+      updateTask(Number(params.id), title, description, category, status);
+      Alert.alert("Success", "Task updated successfully.");
+      router.replace("/(tabs)/task/tasks");
     } catch (error) {
       Alert.alert(
-        "Error",
+        "Update Error",
         error instanceof Error ? error.message : "Something went wrong",
       );
     }
@@ -39,10 +47,13 @@ export default function AddTaskScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>New Task</Text>
+        <Text style={styles.title}>Edit Task</Text>
       </View>
 
+
+  
       <ScrollView style={styles.content} contentContainerStyle={styles.formContent}>
+          <Text style={styles.label}>Name</Text>
         <TextInput
           style={styles.input}
           placeholder="Enter task title"
@@ -50,6 +61,7 @@ export default function AddTaskScreen() {
           onChangeText={setTitle}
         />
 
+        <Text style={styles.label}>Category</Text>
         <TextInput
           style={styles.input}
           placeholder="Enter category"
@@ -57,6 +69,7 @@ export default function AddTaskScreen() {
           onChangeText={setCategory}
         />
 
+        <Text style={styles.label}>Description</Text>
         <TextInput
           style={[styles.input, styles.textArea]}
           placeholder="Enter task description"
@@ -90,8 +103,8 @@ export default function AddTaskScreen() {
       </ScrollView>
 
       <View style={styles.bottomButtonContainer}>
-        <Pressable style={styles.button} onPress={handleSave}>
-          <Text style={styles.buttonText}>Create Task</Text>
+        <Pressable style={styles.button} onPress={handleUpdate}>
+          <Text style={styles.buttonText}>Update Task</Text>
         </Pressable>
       </View>
     </SafeAreaView>
@@ -110,7 +123,8 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 26,
     fontWeight: "700",
-    marginBottom: 0,
+    marginBottom: 5,
+    color: "#000",
   },
   content: {
     flex: 1,
@@ -131,9 +145,10 @@ const styles = StyleSheet.create({
     textAlignVertical: "top",
   },
   label: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: "600",
     marginBottom: 10,
+    color: "#000",
   },
   statusContainer: {
     flexDirection: "row",
@@ -177,4 +192,3 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
-
