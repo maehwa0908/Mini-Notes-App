@@ -96,7 +96,7 @@ export default function Tasks() {
                     style={styles.editButton}
                     onPress={() =>
                       router.push({
-                        pathname: "/(tabs)/task/edit",
+                        pathname: "/task/edit",
                         params: {
                           id: item.id,
                           title: item.title,
@@ -126,7 +126,7 @@ export default function Tasks() {
       <View style={styles.bottomButtonContainer}>
         <Pressable
           style={styles.addButton}
-          onPress={() => router.push("/(tabs)/task/add-task")}
+          onPress={() => router.push("/task/add-task")}
         >
           <Text style={styles.addButtonText}>+ Add Task</Text>
         </Pressable>
