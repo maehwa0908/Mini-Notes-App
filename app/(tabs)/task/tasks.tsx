@@ -14,9 +14,9 @@ import {
 export default function Tasks() {
   const [tasks, setTasks] = useState<Task[]>([]);
 
-  const loadTasks = () => {
+  const loadTasks = async () => {
     try {
-      const data = getTasks();
+      const data = await getTasks();
       setTasks(data);
     } catch (error) {
       Alert.alert("Load Error", "Failed to load tasks");
@@ -38,10 +38,10 @@ export default function Tasks() {
         {
           text: "Delete",
           style: "destructive",
-          onPress: () => {
+          onPress: async () => {
             try {
-              deleteTask(id);
-              loadTasks();
+              await deleteTask(id);
+              await loadTasks();
             } catch (error) {
               Alert.alert("Delete Error", "Failed to delete task");
             }

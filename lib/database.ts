@@ -8,35 +8,37 @@ export type Task = {
   status: string;
 };
 
-const db = SQLite.openDatabaseSync("tasks.db");
+let db: SQLite.SQLiteDatabase | null = null;
 
-export function initDatabase() {
+async function getDb() {
+  if (!db) {
+    db = await SQLite.openDatabaseAsync("tasks.db");
+  }
+  return db;
+}
+
+export async function initDatabase() {
   try {
-    db.execSync(`
-            CREATE TABLE IF NOT EXISTS tasks (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                title TEXT NOT NULL,
-                description TEXT,
-                category TEXT,
-                status TEXT NOT NULL
-            );
-        `);
-    
-    // Add category column if it doesn't exist (for existing databases)
-    try {
-      db.execSync(`ALTER TABLE tasks ADD COLUMN category TEXT;`);
-    } catch (error) {
-      // Column already exists, ignore error
-    }
+    const database = await getDb();
+    await database.execAsync(`
+      CREATE TABLE IF NOT EXISTS tasks (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT NOT NULL,
+        description TEXT,
+        category TEXT,
+        status TEXT NOT NULL
+      )
+    `);
+    console.log("Database initialized successfully");
   } catch (error) {
     console.error("There were problems initializing the database: ", error);
-    throw error;
   }
 }
 
-export function addTask(title: string, description: string, category: string, status: string) {
+export async function addTask(title: string, description: string, category: string, status: string) {
   try {
-    db.runSync(
+    const database = await getDb();
+    await database.runAsync(
       "INSERT INTO tasks (title, description, category, status) VALUES (?, ?, ?, ?)",
       [title, description, category, status],
     );
@@ -46,7 +48,7 @@ export function addTask(title: string, description: string, category: string, st
   }
 }
 
-export function updateTask(
+export async function updateTask(
   id: number,
   title: string,
   description: string,
@@ -54,7 +56,8 @@ export function updateTask(
   status: string,
 ) {
   try {
-    db.runSync(
+    const database = await getDb();
+    await database.runAsync(
       "UPDATE tasks SET title = ?, description = ?, category = ?, status = ? WHERE id = ?",
       [title, description, category, status, id],
     );
@@ -64,20 +67,23 @@ export function updateTask(
   }
 }
 
-export function deleteTask(id: number) {
+export async function deleteTask(id: number) {
   try {
-    db.runSync("DELETE FROM tasks WHERE id = ?", [id]);
+    const database = await getDb();
+    await database.runAsync("DELETE FROM tasks WHERE id = ?", [id]);
   } catch (error) {
     console.error("Error deleting task: ", error);
     throw error;
   }
 }
 
-export function getTasks(): Task[] {
+export async function getTasks(): Promise<Task[]> {
   try {
-    return db.getAllSync("SELECT * FROM tasks ORDER BY id DESC") as Task[];
+    const database = await getDb();
+    const result = await database.getAllAsync<Task>("SELECT * FROM tasks ORDER BY id DESC");
+    return result || [];
   } catch (error) {
     console.error("Error fetching tasks: ", error);
-    throw error;
+    return [];
   }
 }

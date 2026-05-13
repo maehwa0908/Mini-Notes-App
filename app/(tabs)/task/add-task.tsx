@@ -25,7 +25,7 @@ export default function AddTaskScreen() {
       if (!title.trim()) {
         throw new Error("Task title is required");
       }
-      addTask(title, description, category, status);
+      await addTask(title, description, category, status);
       Alert.alert("Success", `Task created successfully.`);
       router.back();
     } catch (error) {

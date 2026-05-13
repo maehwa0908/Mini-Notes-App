@@ -28,12 +28,12 @@ export default function EditTaskScreen() {
   const [category, setCategory] = useState(params.category || "");
   const [status, setStatus] = useState(params.status || "Pending");
 
-  const handleUpdate = () => {
+  const handleUpdate = async () => {
     try {
       if (!title.trim()) {
         throw new Error("Task title is required");
       }
-      updateTask(Number(params.id), title, description, category, status);
+      await updateTask(Number(params.id), title, description, category, status);
       Alert.alert("Success", "Task updated successfully.");
       router.replace("/task/tasks");
     } catch (error) {
