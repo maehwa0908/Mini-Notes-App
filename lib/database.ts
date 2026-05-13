@@ -42,7 +42,7 @@ export function initDatabase() {
 
 export function addTask(title: string, description: string, category: string, status: string) {
   try {
-    const database = getDb();
+    const database = getDb();                                                         
     database.runSync(
       "INSERT INTO tasks (title, description, category, status) VALUES (?, ?, ?, ?)",
       [title, description, category, status],
