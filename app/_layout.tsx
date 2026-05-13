@@ -4,11 +4,7 @@ import { initDatabase } from "@/lib/database";
 
 export default function StackLayout() {
   useEffect(() => {
-    try {
-      initDatabase();
-    } catch (error) {
-      console.error("Failed to initialize database:", error);
-    }
+    initDatabase();
   }, []);
 
   return(

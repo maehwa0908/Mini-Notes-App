@@ -8,49 +8,44 @@ export type Task = {
   status: string;
 };
 
-let db: any = null;
-
-function getDb() {
-  if (!db) {
-    try {
-      db = SQLite.openDatabaseSync("tasks.db");
-    } catch (error) {
-      console.error("Failed to open database:", error);
-      throw error;
-    }
-  }
-  return db;
-}
+const db = SQLite.openDatabase("tasks.db");
 
 export function initDatabase() {
-  try {
-    const database = getDb();
-    database.execSync(`
-      CREATE TABLE IF NOT EXISTS tasks (
+  db.transaction((tx) => {
+    tx.executeSql(
+      `CREATE TABLE IF NOT EXISTS tasks (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         title TEXT NOT NULL,
         description TEXT,
         category TEXT,
         status TEXT NOT NULL
-      )
-    `);
-    console.log("Database initialized successfully");
-  } catch (error) {
-    console.error("There were problems initializing the database: ", error);
-  }
+      )`,
+      [],
+      () => {
+        console.log("Database initialized successfully");
+      },
+      (_, error) => {
+        console.error("There were problems initializing the database: ", error);
+        return false;
+      }
+    );
+  });
 }
 
 export function addTask(title: string, description: string, category: string, status: string) {
-  try {
-    const database = getDb();                                                         
-    database.runSync(
+  db.transaction((tx) => {
+    tx.executeSql(
       "INSERT INTO tasks (title, description, category, status) VALUES (?, ?, ?, ?)",
       [title, description, category, status],
+      () => {
+        console.log("Task added successfully");
+      },
+      (_, error) => {
+        console.error("Error adding task: ", error);
+        return false;
+      }
     );
-  } catch (error) {
-    console.error("Error adding task: ", error);
-    throw error;
-  }
+  });
 }
 
 export function updateTask(
@@ -60,35 +55,51 @@ export function updateTask(
   category: string,
   status: string,
 ) {
-  try {
-    const database = getDb();
-    database.runSync(
+  db.transaction((tx) => {
+    tx.executeSql(
       "UPDATE tasks SET title = ?, description = ?, category = ?, status = ? WHERE id = ?",
       [title, description, category, status, id],
+      () => {
+        console.log("Task updated successfully");
+      },
+      (_, error) => {
+        console.error("Error updating task: ", error);
+        return false;
+      }
     );
-  } catch (error) {
-    console.error("Error updating task: ", error);
-    throw error;
-  }
+  });
 }
 
 export function deleteTask(id: number) {
-  try {
-    const database = getDb();
-    database.runSync("DELETE FROM tasks WHERE id = ?", [id]);
-  } catch (error) {
-    console.error("Error deleting task: ", error);
-    throw error;
-  }
+  db.transaction((tx) => {
+    tx.executeSql(
+      "DELETE FROM tasks WHERE id = ?",
+      [id],
+      () => {
+        console.log("Task deleted successfully");
+      },
+      (_, error) => {
+        console.error("Error deleting task: ", error);
+        return false;
+      }
+    );
+  });
 }
 
-export function getTasks(): Task[] {
-  try {
-    const database = getDb();
-    const result = database.getAllSync("SELECT * FROM tasks ORDER BY id DESC") as Task[];
-    return result || [];
-  } catch (error) {
-    console.error("Error fetching tasks: ", error);
-    return [];
-  }
+export function getTasks(callback: (tasks: Task[]) => void) {
+  db.transaction((tx) => {
+    tx.executeSql(
+      "SELECT * FROM tasks ORDER BY id DESC",
+      [],
+      (_, { rows }) => {
+        const tasks = rows._array as Task[];
+        callback(tasks);
+      },
+      (_, error) => {
+        console.error("Error fetching tasks: ", error);
+        callback([]);
+        return false;
+      }
+    );
+  });
 }

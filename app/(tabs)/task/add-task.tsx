@@ -21,19 +21,13 @@ export default function AddTaskScreen() {
   const [status, setStatus] = useState("Pending");
 
   const handleSave = async () => {
-    try {
-      if (!title.trim()) {
-        throw new Error("Task title is required");
-      }
-      addTask(title, description, category, status);
-      Alert.alert("Success", `Task created successfully.`);
-      router.back();
-    } catch (error) {
-      Alert.alert(
-        "Error",
-        error instanceof Error ? error.message : "Something went wrong",
-      );
+    if (!title.trim()) {
+      Alert.alert("Error", "Task title is required");
+      return;
     }
+    addTask(title, description, category, status);
+    Alert.alert("Success", "Task created successfully.");
+    router.back();
   };
 
   return (

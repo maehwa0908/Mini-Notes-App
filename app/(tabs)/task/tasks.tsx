@@ -15,12 +15,9 @@ export default function Tasks() {
   const [tasks, setTasks] = useState<Task[]>([]);
 
   const loadTasks = () => {
-    try {
-      const data = getTasks();
+    getTasks((data) => {
       setTasks(data);
-    } catch (error) {
-      Alert.alert("Load Error", "Failed to load tasks");
-    }
+    });
   };
 
   useFocusEffect(
@@ -39,12 +36,8 @@ export default function Tasks() {
           text: "Delete",
           style: "destructive",
           onPress: () => {
-            try {
-              deleteTask(id);
-              loadTasks();
-            } catch (error) {
-              Alert.alert("Delete Error", "Failed to delete task");
-            }
+            deleteTask(id);
+            loadTasks();
           },
         },
       ]
