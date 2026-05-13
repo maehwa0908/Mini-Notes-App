@@ -21,9 +21,9 @@ export default function TaskDetailScreen() {
         {
           text: "Delete",
           style: "destructive",
-          onPress: async () => {
+          onPress: () => {
             try {
-              await deleteTask(Number(id));
+              deleteTask(Number(id));
               router.replace("/task/tasks");
             } catch (error) {
               Alert.alert("Error", "Failed to delete task");

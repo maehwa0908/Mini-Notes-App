@@ -33,7 +33,7 @@ export default function EditTaskScreen() {
       if (!title.trim()) {
         throw new Error("Task title is required");
       }
-      await updateTask(Number(params.id), title, description, category, status);
+      updateTask(Number(params.id), title, description, category, status);
       Alert.alert("Success", "Task updated successfully.");
       router.replace("/task/tasks");
     } catch (error) {
