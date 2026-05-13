@@ -60,7 +60,7 @@ export default function TaskDetailScreen() {
         style={styles.editButton}
         onPress={() =>
           router.push({
-            pathname: "task/edit",
+            pathname: "/task/edit",
             params: { id, title, description, category, status },
           })
         }

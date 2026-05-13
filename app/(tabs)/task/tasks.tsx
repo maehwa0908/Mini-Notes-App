@@ -78,7 +78,7 @@ export default function Tasks() {
                     style={styles.detailButton}
                     onPress={() =>
                       router.push({
-                        pathname: "task/detail",
+                        pathname: "/task/detail",
                         params: {
                           id: item.id,
                           title: item.title,
