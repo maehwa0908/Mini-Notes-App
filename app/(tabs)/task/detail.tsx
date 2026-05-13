@@ -24,7 +24,7 @@ export default function TaskDetailScreen() {
           onPress: () => {
             try {
               deleteTask(Number(id));
-              router.replace("/(tabs)/task/tasks");
+              router.replace("/task/tasks");
             } catch (error) {
               Alert.alert("Error", "Failed to delete task");
             }

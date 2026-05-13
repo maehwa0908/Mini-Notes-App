@@ -10,7 +10,7 @@ export default function HomeScreen() {
         <Text style={styles.title}>Notes App</Text>
         <Pressable
           style={styles.button}
-          onPress={() => router.push('/(tabs)/task/tasks')}
+          onPress={() => router.push('/task/tasks')}
         >
           <Text style={styles.buttonText}>Go to Notes</Text>
         </Pressable>
